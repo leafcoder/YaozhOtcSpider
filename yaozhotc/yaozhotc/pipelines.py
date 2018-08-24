@@ -29,7 +29,19 @@ class YaozhotcPipeline(object):
         spider._w.writeheader()
 
     def close_spider(self, spider):
-        spider._w.close()
+        spider._f.close()
+        self.convert_to_winfile()
+
+    def convert_to_winfile(self):
+        base_dir = self.base_dir
+        data_dir = join(base_dir, 'data')
+        filepath = join(data_dir, 'otc.csv')
+        win_path = join(data_dir, 'otc.windows.csv')
+        with open(filepath, 'r') as f:
+            lines = f.readlines()
+        with open(win_path, 'wb') as win_f:
+            for line in lines:
+                win_f.write(line.encode('gb18030'))
 
     @classmethod
     def from_crawler(cls, crawler):
